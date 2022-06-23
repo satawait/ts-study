@@ -236,3 +236,79 @@ const Circle: CircleInterface = class Circle {
     this.radius = radius
   }
 }
+
+// const enum Season { // 编译后更简洁
+enum Season {
+  Spring = 12 | 2, // 计算
+  Summer = 'test'.length,
+  Fall = 15,
+  Winter
+}
+console.log(Season.Spring, Season.Summer, Season.Fall, Season.Winter)
+// console.log(Season[0], Season[1], Season[2], Season[3])
+
+interface PrintAge {
+  (num: number): string
+}
+const printAge = (age = 18) => {
+  console.log(age)
+}
+// const printAge1: PrintAge = printAge // 报错
+type arrItem = number | string | null
+const arrNew: arrItem[] = [0, '1', null]
+
+const testa = '123' // 类型是 '123'
+let testb = '123' // 类型拓宽 string
+let testc = null
+const testd = null
+interface Vector3 {
+  x: number
+  y: number
+  z: number
+}
+function getComponent(vector: Vector3, axis: "x" | "y" | "z") {
+  return vector[axis]
+}
+// let axis = 'x' // 报错
+const axis = 'x'
+getComponent({x: 10, y: 10, z: 10}, axis)
+const obj2 = {
+  x: 1 as const, // 1
+  y: 2 // number
+}
+// obj2.x = 3 // 报错
+obj2.y = 3
+
+type Goods = 'pen' | 'pencil' |'ruler'
+const getCost = (item: Goods) =>  {
+  if (item === 'pen') {
+    item // item => 'pen'
+  } else {
+    item // => 'pencil' | 'ruler'
+  }
+}
+interface UploadEvent {
+  type: "upload"
+  filename: string
+  contents: string
+}
+
+interface DownloadEvent {
+  type: "download"
+  filename: string
+}
+
+type AppEvent = UploadEvent | DownloadEvent
+
+function handleEvent(e: AppEvent) {
+  switch (e.type) {
+    case "download":
+      e // Type is DownloadEvent 
+      break;
+    case "upload":
+      e // Type is UploadEvent 
+      break;
+  }
+}
+
+  

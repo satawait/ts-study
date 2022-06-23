@@ -93,3 +93,146 @@ let ObjA: {}
 // obj = age // 报错
 Obj = age
 ObjA =age
+
+interface Person {
+  readonly id: number,
+  age: number,
+  name: string,
+  height?: number
+}
+
+const p1: Person = {
+  id: 2333,
+  age: 20,
+  name: 'sam',
+  height: 1
+}
+// p1.id = 3333 // 报错
+console.log(p1.name)
+
+interface Isum {
+  (x: number, ...y: number[]): number
+}
+const iSum: Isum = (x: number, y: number, ...z: number[]): number => {
+  return z.reduce((pre, next) => pre + next, x + y)
+}
+console.log(iSum(1, 2, 3))
+
+interface NotSureKey {
+  readonly id: number,
+  age: number,
+  name: string,
+  height?: number,
+  // [proName: string | number]: string, // 报错，必须包含上述类型
+  [proName: string | number]: string | number | undefined
+}
+interface NotSureKey2 {
+  [proName: number]: string | number | undefined
+}
+const nsk: NotSureKey2 = ['sam', 'lily'] // 不是真的数组
+
+interface LabeledValue {
+  label: string
+}
+const labeledObj: LabeledValue = {
+  label: 'duck'
+}
+const newObj = {
+  label: 'duck2',
+  position: 'north'
+}
+const printLabel = (labeledObj: LabeledValue) => {
+  console.log(labeledObj.label)
+}
+printLabel(labeledObj)
+printLabel(newObj)
+
+interface FunctionWithProps {
+  (x: number): void
+  fnName: string
+}
+const fwp: FunctionWithProps = (x: number) => {
+  console.log(x)
+}
+fwp.fnName = 'myFunction'
+
+abstract class Animal {
+  moveMethod: string
+  constructor(method: string) {
+    this.moveMethod = method
+  }
+  abstract move(step: number): void
+}
+// const animal = new Animal('walk') // 报错
+class PersonObject extends Animal {
+  name: string
+  private gender: string = 'male'
+  protected food: string = 'grass'
+  constructor(name: string) {
+    super('walk')
+    this.name = name
+  }
+  speak(word: string) {
+    console.log(`${this.name} say: ${word}`)
+  }
+  move(step: number): void {
+      console.log(`I walk ${step} steps`)
+  }
+}
+const sam = new PersonObject('sam')
+sam.speak('hello')
+class StudentObject extends PersonObject {
+  grade: number
+  score: number = 100
+  private height: number
+  static mathTeacher: string = 'lily'
+  constructor(name: string, grade: number, height: number, score?: number) {
+    super(name)
+    this.grade = grade
+    this.height = height
+    if (score) {
+      this.score = score
+    }
+  }
+  study(subject: string) {
+    console.log(`${this.name} study ${subject}`)
+    return this
+  }
+  speak(word: string) {
+    console.log(`${this.name} say: ${word} loudly, I like eat ${this.food}`)
+    return this
+  }
+}
+const stu1 = new StudentObject('sam', 7, 183)
+stu1.study('math')
+stu1.speak('hello')
+stu1.study('language').speak('hello').move(10)
+console.log(StudentObject.mathTeacher)
+// console.log(stu1.mathTeacher) // 报错
+// console.log(stu1.height, stu1.gender, stu1.food) // 报错
+
+interface MusicInterface {
+  playMusic(song: 'string'): void
+}
+interface CallInterface {
+  callPeople(name: string): void
+}
+class cellPhone implements MusicInterface, CallInterface {
+  playMusic(song: "string"): void {
+      console.log(`i'm playing ${song}`)
+  }
+  callPeople(name: string): void {
+      console.log(`i'm calling with ${name}`)
+  }
+}
+interface CircleInterface {
+  new (radius: number): void
+  pi: number
+}
+const Circle: CircleInterface = class Circle {
+  static pi: number = 3.14
+  radius: number
+  constructor(radius: number) {
+    this.radius = radius
+  }
+}

@@ -311,4 +311,135 @@ function handleEvent(e: AppEvent) {
   }
 }
 
+const num2: 1| 2 = 1
+let num3: 1| 2 = 2
+interface A {
+  x: number
+}
+interface B {
+  y: number
+}
+interface C {
+  z: number
+}
+type ABC = A & B & C
+const abc: ABC = {
+  x:1,
+  y: 2,
+  z: 2
+}
+type addType = (num1:number,num2:number) => number
+interface addType1 {
+    (num1:number,num2:number):number
+}
+const add1:addType = (num1, num2) => {
+  return num1 + num2
+}
+const add2:addType1 = (num1, num2) => {
+  return num1 + num2
+}
+interface Person1 {
+  name: string
+}
+interface Person1 {
+  age: number
+}
+const person1: Person1 = {
+  name: 'xiaoming',
+  age: 18
+}
+type Person2 = {
+  name: string
+}
+// // 报错
+// type Person2 = {
+//   age: number
+// }
   
+const arrayNumber: number[] = [1, 2, 3, 4]
+const findedNum: number = arrayNumber.find(num => num > 3) as number
+const findedNum1: number = <number>arrayNumber.find(num => num > 3)
+// let xNum: number // 报错
+let xNum!: number // 非空断言
+const initializeNum = () => {
+  xNum = 3
+}
+initializeNum()
+console.log(2 * xNum)
+
+type Gender = 'male' | 'female'
+const gender: Gender = 'male'
+const gender1: 'male' = 'male'
+const gender2 = 'male'
+let gender3: 'male' = 'male' // 'male' 类型
+let gender4 = 'male' // string类型
+
+// 泛型
+const print1 = <T>(arg: T): T => {
+  console.log(arg)
+  return arg
+}
+type PrintType = <T>(arg: T) => T
+const print2: PrintType = arg => {
+  console.log(arg)
+  return arg
+}
+interface IPrint<T = number> {
+  (arg: T): T
+}
+const iPrint = <T>(arg: T): T => {
+  console.log(arg)
+  return arg
+}
+const print3: IPrint = iPrint
+const print4: IPrint<string> = iPrint
+print3(2)
+print2(2)
+print2(false)
+print4('123')
+const swap = <T, U>(tuple: [T, U]): [U, T] => {
+  console.log(tuple[0], tuple[1])
+  return [tuple[1], tuple[0]]
+}
+const bSwap: [number, string] = [1, '123']
+const aSwap = swap(bSwap)
+interface UserInfo {
+  name: string
+  age: number
+}
+const requrestUrl = <T>(url: string): Promise<T> => {
+  return fetch(url).then(res => res.json())
+}
+requrestUrl<UserInfo>('user/info').then(res => {
+  console.log(res)
+})
+// 约束必须有length
+interface ILength {
+  length: number
+}
+const printLength = <T extends ILength>(args: T): T => {
+  console.log(args.length)
+  return args
+}
+// 约束类
+class Stack<T> {
+  private data: T[] = []
+  push(item: T): number {
+    return this.data.push(item)
+  }
+  pop(): T | undefined {
+    return this.data.pop()
+  }
+}
+const stack1 = new Stack<number>()
+stack1.push(2)
+// stack1.push('123') // 报错
+// 约束接口
+interface KeyValue<T, U> {
+  key: T,
+  value: U
+}
+const kv1: KeyValue<string, number> = {
+  key: 'age',
+  value: 18
+}

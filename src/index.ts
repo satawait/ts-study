@@ -407,12 +407,12 @@ interface UserInfo {
   name: string
   age: number
 }
-const requrestUrl = <T>(url: string): Promise<T> => {
-  return fetch(url).then(res => res.json())
-}
-requrestUrl<UserInfo>('user/info').then(res => {
-  console.log(res)
-})
+// const requrestUrl = <T>(url: string): Promise<T> => {
+//   return fetch(url).then(res => res.json())
+// }
+// requrestUrl<UserInfo>('user/info').then(res => {
+//   console.log(res)
+// })
 // 约束必须有length
 interface ILength {
   length: number
@@ -421,6 +421,10 @@ const printLength = <T extends ILength>(args: T): T => {
   console.log(args.length)
   return args
 }
+printLength({
+  length: 10,
+  name: 2
+})
 // 约束类
 class Stack<T> {
   private data: T[] = []
@@ -452,3 +456,33 @@ interface StringArray1 {
   [index: number]: string
 }
 type saT1 = keyof StringArray1
+const prop = <T extends {}, K extends keyof T>(obj: T, key: K) => {
+  return obj[key]
+}
+interface Todo {
+  id: number
+  name: string,
+  grade: number
+}
+const todo: Todo = {
+  id: 1,
+  name: 'sam',
+  grade: 7
+}
+console.log(prop(todo, 'id'))
+type types = keyof Todo
+type Objss =  {
+  [p in types]: any
+}
+
+enum week {
+  monday,
+  tuseday
+}
+type Objsss =  {
+  [p in week]: number
+}
+type ReturnTypes<T> = T extends (
+  ...args: any[]
+) => infer R ? R : any;
+const rts: ReturnTypes<number> = (): number => 2

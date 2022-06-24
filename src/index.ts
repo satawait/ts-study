@@ -443,3 +443,12 @@ const kv1: KeyValue<string, number> = {
   key: 'age',
   value: 18
 }
+type kvT = keyof KeyValue<string, string>
+interface StringArray {
+  [index: string]: string
+}
+type saT = keyof StringArray
+interface StringArray1 {
+  [index: number]: string
+}
+type saT1 = keyof StringArray1

@@ -493,3 +493,22 @@ const getValues = <T, K extends keyof T>(obj: T, keys: K[]): T[K][] => {
   return keys.map(key=> obj[key])
 }
 console.log(getValues({name: 'sam', age: 12}, ['age', 'name']))
+type pTodo = Partial<Todo>
+type RTodo = Readonly<Todo>
+type PTodo = Pick<Todo, 'name' | 'grade'>
+type ITodo = Record<string, Todo>
+const iTodo = {
+  'todo1': {
+    id: 1,
+    name: 'sam',
+    grade: '12'
+  }
+}
+type ETodo = Exclude<keyof Todo, 'id'>
+const eTodo: ETodo = 'name'
+type ETTodo = Extract<keyof Todo, 'id'>
+const eTTodo: ETTodo = 'id'
+type OTodo = Omit<Todo, 'id'>
+type T0 = NonNullable<string | number | null | undefined>
+type T1 = Parameters<(x: number, y: number) => string>
+type T2 = ReturnTypes<(x: number, y: number) => string>

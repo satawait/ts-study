@@ -486,3 +486,10 @@ type ReturnTypes<T> = T extends (
   ...args: any[]
 ) => infer R ? R : any;
 const rts: ReturnTypes<number> = (): number => 2
+
+const type1: Todo['id'] = 1
+
+const getValues = <T, K extends keyof T>(obj: T, keys: K[]): T[K][] => {
+  return keys.map(key=> obj[key])
+}
+console.log(getValues({name: 'sam', age: 12}, ['age', 'name']))

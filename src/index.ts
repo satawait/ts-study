@@ -1,3 +1,5 @@
+import myFetch from './utils/myFetch'
+import { HTTPMethod } from './utils/myFetch'
 const userName: string = 'test'
 const isMale: boolean = true
 const age: number = 20
@@ -512,3 +514,6 @@ type OTodo = Omit<Todo, 'id'>
 type T0 = NonNullable<string | number | null | undefined>
 type T1 = Parameters<(x: number, y: number) => string>
 type T2 = ReturnTypes<(x: number, y: number) => string>
+myFetch.post<UserInfo>('http://localhost:3000/user', 'test').then(res => {
+  console.log(res.age)
+})

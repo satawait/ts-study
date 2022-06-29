@@ -517,3 +517,20 @@ type T2 = ReturnTypes<(x: number, y: number) => string>
 myFetch.post<UserInfo>('http://localhost:3000/user', 'test').then(res => {
   console.log(res.age)
 })
+
+interface Itest1 {
+  data: string
+}
+interface Itest2 {
+  msg: string,
+  data: string
+}
+
+type test3 = Itest1 | Itest2
+type test5 = keyof test3
+const test4: test3 = {
+  msg: '2',
+  data: '44'
+}
+// 联合类型只能访问共有属性
+test4.data

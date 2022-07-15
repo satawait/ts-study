@@ -667,3 +667,5 @@ type Bar01 = {
 type B01 = Bar<Bar01>
 // 交叉类型
 type B02 = Bar1<Bar01>
+type FirstIfString<T> = T extends [infer S extends string, ...unknown[]] ? S: never
+type F01 = FirstIfString<['123', number]>

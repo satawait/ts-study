@@ -1,5 +1,5 @@
-import myFetch from './utils/myFetch'
-import { HTTPMethod } from './utils/myFetch'
+// import myFetch from './utils/myFetch'
+// import { HTTPMethod } from './utils/myFetch'
 const userName: string = 'test'
 const isMale: boolean = true
 const age: number = 20
@@ -487,7 +487,9 @@ type Objsss =  {
 type ReturnTypes<T> = T extends (
   ...args: any[]
 ) => infer R ? R : any;
-const rts: ReturnTypes<number> = (): number => 2
+function testRts(): number { return 2}
+const rts: ReturnTypes<typeof testRts> = 3
+const rts1: ReturnTypes<number> = (): number => 2
 
 const type1: Todo['id'] = 1
 
@@ -499,11 +501,11 @@ type pTodo = Partial<Todo>
 type RTodo = Readonly<Todo>
 type PTodo = Pick<Todo, 'name' | 'grade'>
 type ITodo = Record<string, Todo>
-const iTodo = {
+const iTodo: ITodo = {
   'todo1': {
     id: 1,
     name: 'sam',
-    grade: '12'
+    grade: 12
   }
 }
 type ETodo = Exclude<keyof Todo, 'id'>
@@ -514,9 +516,9 @@ type OTodo = Omit<Todo, 'id'>
 type T0 = NonNullable<string | number | null | undefined>
 type T1 = Parameters<(x: number, y: number) => string>
 type T2 = ReturnTypes<(x: number, y: number) => string>
-myFetch.post<UserInfo>('http://localhost:3000/user', 'test').then(res => {
-  console.log(res.age)
-})
+// myFetch.post<UserInfo>('http://localhost:3000/user', 'test').then(res => {
+//   console.log(res.age)
+// })
 
 interface Itest1 {
   data: string
@@ -534,3 +536,134 @@ const test4: test3 = {
 }
 // 联合类型只能访问共有属性
 test4.data
+
+
+type T50<T> = {
+  [P in keyof T]: number
+}
+
+type T51 = T50<any>
+type T52 = keyof any
+type T53 = {
+  [P in T52]: number
+}
+type T54 = keyof unknown
+type T55 = {
+  name: string,
+  gender: string
+}
+type T56 = {
+  age: number,
+  gender: 'male' | 'female'
+}
+type T57 = T56 & T55
+type T58 = T56 | T55
+const t57: T57 = {
+  age: 22,
+  name: 'sum',
+  gender: 'male'
+}
+const t58: T58 = {
+  age: 22,
+  name: 'sum',
+  gender: 'male'
+}
+t57.age
+
+type T59 = Record<string | number, string>
+const t59: T59 = {
+  name: 'sam'
+}
+type T60 = {
+  [key: string]: string
+}
+const t60: T60 = {
+  name: 'sam'
+}
+
+// 重载签名
+function greet(person: string): string
+function greet(person: string[]): string[]
+function greet(person: unknown): unknown {
+  if (typeof person === 'string') {
+    return `Hello ${person}`
+  } else if (Array.isArray(person)) {
+    return person.map(p => `Hello ${p}`)
+  }
+  throw new Error('unable to greet')
+}
+console.log(greet('sam'))
+console.log(greet(['sam']))
+
+type Getter<T> = {
+  [K in keyof T as `get${Capitalize<string & K>}`]: () => T[K]
+}
+type T61 = Getter<Itest2>
+type T62 = keyof typeof t59
+class C01 {
+  name: string
+  age: number
+  constructor(name: string, age: number) {
+    this.name = name
+    this.age = age
+  }
+}
+function createPoint(Constructor: typeof C01, name: string, age: number) {
+  return new Constructor(name, age)
+}
+let requestMethod = 'Get'
+let requestMethod1 = 'Get' as const
+const requestMethod2 = 'Get'
+const requestMethod3 = 'Get' as const
+type R0 = typeof requestMethod
+type R1 = typeof requestMethod1
+type R2 = typeof requestMethod2
+type R3 = typeof requestMethod3
+
+// 条件类型，裸类型是分布式条件类型
+type Naked<T> = T extends boolean ? 'Y' : 'N'
+type WrappedTuple<T> = [T] extends [boolean] ? 'Y' : 'N'
+type WrappedArray<T> = T[] extends boolean[] ? 'Y' : 'N'
+type WrappedPromise<T> = Promise<T> extends Promise<boolean> ? 'Y' : 'N'
+type T66 = Naked<number | boolean>
+type T67 = WrappedTuple<number | boolean>
+type T68 = WrappedArray<number | boolean>
+type T69 = WrappedPromise<number | boolean>
+type T70 = Exclude<string | number, number>
+
+type UnpackedArray<T> = T extends(infer U)[] ? U : T
+type U0 = UnpackedArray<number| string[]>
+type B0 = Naked<boolean[]>
+type UnpackedFn<T> = T extends (...args: any[]) => infer U ? U : T
+declare function foo(x: string): number
+declare function foo(x: string): string
+declare function foo(x: number): string
+declare function foo(x: string | number): string | number
+type UU = typeof foo
+type U1 = UnpackedFn<UU>
+type U2 = UnpackedFn<number>
+
+type PropertyType<T> = T extends {id: infer U, name: infer R} ? [U, R] : T
+type PropertyType1<T> = T extends {id: infer U, name: infer U} ? U : T
+type User01 = {
+  id: number,
+  name: string
+}
+type p01 = PropertyType<User01>
+// 联合类型
+type p02 = PropertyType1<User01>
+type Bar<T> = T extends {
+  a: (x: infer U) => void,
+  b: (x: infer R) => void
+} ? [U, R] : T
+type Bar1<T> = T extends {
+  a: (x: infer U) => void,
+  b: (x: infer U) => void
+} ? U : T
+type Bar01 = {
+  a: (x: number) => void,
+  b: (y: string) => void
+}
+type B01 = Bar<Bar01>
+// 交叉类型
+type B02 = Bar1<Bar01>

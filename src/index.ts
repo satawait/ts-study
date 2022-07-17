@@ -595,6 +595,7 @@ function greet(person: unknown): unknown {
 console.log(greet('sam'))
 console.log(greet(['sam']))
 
+// as 子句
 type Getter<T> = {
   [K in keyof T as `get${Capitalize<string & K>}`]: () => T[K]
 }
@@ -669,3 +670,48 @@ type B01 = Bar<Bar01>
 type B02 = Bar1<Bar01>
 type FirstIfString<T> = T extends [infer S extends string, ...unknown[]] ? S: never
 type F01 = FirstIfString<['123', number]>
+
+// 模板字面量
+type EventName<T extends string> = `${T}Changed`
+type T71 = EventName<'foo' | 'bar'>
+const t71: T71 = 'fooChanged'
+const t711: T71 = 'barChanged'
+type Direction = 'left' | 'right' | 'top' | 'bottom'
+type InferRoot<T> = T extends `${infer R}${Capitalize<Direction>}` ? R : T
+type T72 = InferRoot<'marginLeft'>
+type T73 = InferRoot<'marginL'>
+
+type PropType<T, Path extends string> = string extends Path
+  ? unknown
+  : Path extends keyof T
+  ? T[Path]
+  : Path extends `${infer K}.${infer R}`
+  ? K extends keyof T
+    ? PropType<T[K], R>
+    : unknown
+  : unknown
+declare function getPropValue<T, P extends string>(obj: T, path: P): PropType<T, P>
+const obj11 = {
+  a: {
+    b: {
+      c: 666,
+      d: 'sam'
+    }
+  }
+}
+const abd = getPropValue(obj11, 'a.b')
+
+type MyPick<T, K extends keyof T> = {
+  [P in K]: T[P]
+}
+type MyUser = {
+  name: string,
+  id: number,
+  gender: string
+}
+type MyPickedUser = MyPick<MyUser, 'name' | 'id'>
+
+type MyOmit<T, K extends keyof T> = {
+  [P in Exclude<keyof T, K>]: T[P]
+}
+type MyOmittedUser = MyOmit<MyUser, 'name' | 'id'>

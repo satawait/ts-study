@@ -547,6 +547,10 @@ type T52 = keyof any
 type T53 = {
   [P in T52]: number
 }
+const t53: T53 = {
+  test: 1,
+  3: 22
+}
 type T54 = keyof unknown
 type T55 = {
   name: string,

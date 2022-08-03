@@ -719,3 +719,162 @@ type MyOmit<T, K extends keyof T> = {
   [P in Exclude<keyof T, K>]: T[P]
 }
 type MyOmittedUser = MyOmit<MyUser, 'name' | 'id'>
+type P<T> = T extends 'x' ? 1 : 2
+type A3 = P<'x' | 'y'> // 泛型是分开校验的
+type P1<T> = T extends ['x'] ? 1 : 2
+type A31 = P1<'x' | 'y'> // 元组的形式就不会分开校验
+
+// 具有父子关系的多个类型，在通过某种构造关系构造成的新的类型，如果还具有父子关系则是协变的，而关系逆转了（子变父，父变子）就是逆变的。
+// 协变
+interface Animal {
+  name: string;
+}
+
+interface Dog extends Animal {
+  break(): void;
+}
+
+let Eg1: Animal;
+let Eg2!: Dog;
+// 兼容，可以赋值
+Eg1 = Eg2;
+
+let Eg3: Animal[]
+let Eg4!: Dog[]
+// 兼容，可以赋值
+Eg3 = Eg4
+
+// 逆变
+interface AnimalA {
+  name: string;
+}
+
+interface DogA extends AnimalA {
+  break(): void;
+}
+
+type AnimalFn = (arg: AnimalA) => void
+type DogFn = (arg: DogA) => void
+
+let Eg5: AnimalFn = args => { console.log(args.name) };
+let Eg6: DogFn = args => { console.log(args.break(), 'dog') };
+// 不再可以赋值了，
+// AnimalFn = DogFn不可以赋值了, Animal = Dog是可以的
+// Eg5 = Eg6; // 报错
+// 反过来可以
+Eg6 = Eg5;
+Eg6({name: 'animal', break: () => { console.log('break')}})
+
+// interface EventListener {
+//   (evt: Event): void;
+// }
+// // 简化后的Event
+// interface Event {
+//   readonly target: EventTarget | null;
+//   preventDefault(): void;
+// }
+// // 简化合并后的MouseEvent
+// interface MouseEvent extends Event {
+//   readonly x: number;
+//   readonly y: number;
+// }
+
+// // 简化后的Window接口
+// interface Window {
+//   // 简化后的addEventListener
+//   addEventListener(type: string, listener: EventListener): void
+// }
+
+// // 日常使用
+// window.addEventListener('click', (e: Event) => {});
+// window.addEventListener('mouseover', (e: MouseEvent) => {});
+
+// infer推导的名称相同并且都处于逆变的位置，则推导的结果将会是交叉类型
+type Bars<T> = T extends {
+  a: (x: infer U) => void;
+  b: (x: infer U) => void;
+} ? U : never;
+
+// type T1 = string
+type T1s = Bars<{ a: (x: string) => void; b: (x: string) => void }>;
+
+// type T2 = never
+type T2s = Bars<{ a: (x: string) => void; b: (x: number) => void }>;
+// infer推导的名称相同并且都处于协变的位置，则推导的结果将会是联合类型。
+type Foos<T> = T extends {
+  a: infer U;
+  b: infer U;
+} ? U : never;
+
+// type T1 = string
+type T1ss = Foos<{ a: string; b: string }>;
+
+// type T2 = string | number
+type T2ss = Foos<{ a: string; b: number }>;
+
+type MyPartial<T, K extends keyof T> = {
+  [p in K]?: T[p]
+} & {
+  [q in Exclude<keyof T, K>]: T[q]
+}
+type TestPartial = {
+  name: string,
+  age: number,
+  gender: string
+}
+type TestPartialed = MyPartial<TestPartial, 'name'>
+const testPartialed: TestPartialed = {
+  age: 20,
+  gender: 'male',
+  name: 'sam'
+}
+
+type Cap = Capitalize<'abc'>
+type UnCap = Uncapitalize<'ABc'>
+
+/**
+ * @desc NonUndefined判断T是否为undefined
+ */
+ type NonUndefined<T> = T extends undefined ? never : T;
+
+type Primitive =
+  | string
+  | number
+  | bigint
+  | boolean
+  | symbol
+  | null
+  | undefined;
+
+/**
+ * @desc 用于创建获取指定类型工具的类型工厂
+ * @param T 待提取的类型
+ * @param P 要创建的类型
+ * @param IsCheckNon 是否要进行null和undefined检查
+ */
+type KeysFactory<T, P extends Primitive | Function | object, IsCheckNon extends boolean> = {
+  [K in keyof T]: IsCheckNon extends true
+    ? (NonUndefined<T[K]> extends P ? K : never)
+    : (T[K] extends P ? K : never);
+}[keyof T];
+
+/**
+ * @example
+ * 例如上述KeysFactory就可以通过工厂类型进行创建了
+ */
+type FunctionKeys<T> = KeysFactory<T, Function, true>;
+type StringKeys<T> = KeysFactory<T, string, true>;
+type NumberKeys<T> = KeysFactory<T, string, true>;
+
+/**
+ * @desc 一个辅助类型，判断X和Y是否类型相同，
+ * @returns 是则返回A，否则返回B
+ */
+ type IfEquals<X, Y, A = X, B = never> = (<T>() => T extends X ? 1 : 2) extends (<T>() => T extends Y ? 1 : 2)
+ ? A
+ : B;
+
+ // Eg2 = false
+type Eg2 = {} extends {key1: string} ? true : false;
+// Eg3 = true
+type Eg3 = {} extends {key1?: string} ? true : false;
